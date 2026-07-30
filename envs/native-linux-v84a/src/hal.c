@@ -68,13 +68,38 @@ void debug_test_ok()   { printf( "Ok\n"    ); }
 void debug_test_fail() { printf( "FAIL!\n" ); }
 
 
-#if !defined(EXTERNAL_CYCLES) && !defined(PERF_CYCLES) && !defined(PMU_CYCLES) && !defined(NO_CYCLES)
+#if !defined(EXTERNAL_CYCLES) && !defined(PERF_CYCLES) && !defined(PMU_CYCLES) && !defined(NANOSEC_CYCLES) && !defined(NO_CYCLES)
 #define NO_CYCLES
 #endif
 
 #if defined(PMU_CYCLES)
+#include <fcntl.h>
+#include <pmuctl.h>
+#include <unistd.h>
+
+static int pmuctl_fd = -1;
+
+static void set_pmccntr_el0_access(int enable) {
+    struct pmuctl_pmccntr_data arg = { .enable = enable };
+
+    if (ioctl(pmuctl_fd, PMU_IOC_PMCCNTR, &arg) < 0) {
+        perror("ioctl(PMU_IOC_PMCCNTR)");
+        close(pmuctl_fd);
+        pmuctl_fd = -1;
+        exit(EXIT_FAILURE);
+    }
+}
+
 void enable_cyclecounter() {
     uint64_t tmp;
+
+    pmuctl_fd = open("/dev/pmuctl", O_RDONLY | O_CLOEXEC);
+    if (pmuctl_fd < 0) {
+        perror("open(/dev/pmuctl)");
+        exit(EXIT_FAILURE);
+    }
+    set_pmccntr_el0_access(1);
+
     __asm __volatile (
         "mrs    %[tmp], pmcr_el0\n"
         "orr    %[tmp], %[tmp], #1\n"
@@ -94,6 +119,10 @@ void disable_cyclecounter() {
             "msr    pmcntenclr_el0, %[tmp]\n"
             : [tmp] "=r" (tmp)
             );
+
+    set_pmccntr_el0_access(0);
+    close(pmuctl_fd);
+    pmuctl_fd = -1;
 }
 
 uint64_t get_cyclecounter() {
@@ -151,6 +180,26 @@ uint64_t get_cyclecounter() {
     }
     ioctl(perf_fd, PERF_EVENT_IOC_ENABLE, 0);
     return cpu_cycles;
+}
+
+#elif defined(NANOSEC_CYCLES)
+
+#include <time.h>
+
+void enable_cyclecounter() {
+    return;
+}
+
+void disable_cyclecounter() {
+    return;
+}
+
+uint64_t get_cyclecounter() {
+    struct timespec now;
+    if (clock_gettime(CLOCK_MONOTONIC_RAW, &now) != 0) {
+        return 0;
+    }
+    return (uint64_t)now.tv_sec * 1000000000ULL + (uint64_t)now.tv_nsec;
 }
 
 #elif defined(EXTERNAL_CYCLES)

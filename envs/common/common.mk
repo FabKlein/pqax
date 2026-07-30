@@ -21,7 +21,7 @@ CFLAGS+= -O3\
 
 LDFLAGS = -static
 
-CYCLES?=NO # PMU / PERF
+CYCLES?=NO # PMU / PERF / NANOSEC
 
 ifeq ($(CYCLES),PMU)
 	CFLAGS += -DPMU_CYCLES
@@ -29,6 +29,10 @@ endif
 
 ifeq ($(CYCLES),PERF)
 	CFLAGS += -DPERF_CYCLES
+endif
+
+ifeq ($(CYCLES),NANOSEC)
+	CFLAGS += -DNANOSEC_CYCLES
 endif
 
 ifeq ($(CYCLES),NO)

@@ -80,9 +80,32 @@ MAKE_PROFILE(padding)
 
 MAKE_PROFILE(throughput_vadd_vsub)
 
-int main( void )
+int main(int argc, char **argv)
 {
+    uint64_t target_frequency_mhz = 32;
+    char *end = NULL;
+
+    if (argc > 2)
+    {
+        debug_printf("Usage: %s [target-frequency-MHz]\n", argv[0]);
+        return 1;
+    }
+    if (argc == 2)
+    {
+        target_frequency_mhz = strtoull(argv[1], &end, 10);
+        if (*argv[1] == '\0' || *end != '\0' || target_frequency_mhz == 0)
+        {
+            debug_printf("Invalid target frequency: %s\n", argv[1]);
+            return 1;
+        }
+    }
+    profiling_set_target_frequency_mhz(target_frequency_mhz);
+
     debug_printf( "=========== uArch profiling ===============\n" );
+#if defined(NANOSEC_CYCLES)
+    debug_printf("- Linux nanosecond timer, target frequency: %llu MHz\n",
+                 (unsigned long long)target_frequency_mhz);
+#endif
 
     debug_printf( "- Enable cycle counter ..." );
     enable_cyclecounter();

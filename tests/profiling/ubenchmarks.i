@@ -1,6 +1,8 @@
 // Needed to provide ASM_LOAD directive
 #include <hal_env.h>
 
+#define UBENCH_RUNTIME_REPEATS 80
+
         qform_v0  .req q0
         qform_v1  .req q1
         qform_v2  .req q2
@@ -86,6 +88,12 @@
 .endm
 
 loop_cnt .req x30
+runtime_loop_cnt .req x28
+saved_base0 .req x24
+saved_base1 .req x25
+saved_base2 .req x26
+saved_base3 .req x27
+saved_base4 .req x30
 
 .macro make_ubench name, preamble, code, end_of_iteration
        .p2align 4
@@ -122,6 +130,40 @@ _ubench_\name\():
         \end_of_iteration\()
         subs loop_cnt, loop_cnt, #1
         cbnz loop_cnt, 1b
+        pop_stack
+        ret
+.endm
+
+// Compact alternative to make_ubench. The measured core is emitted once and
+// executed in a runtime loop. x24-x27 preserve the first four incoming buffer
+// bases, x28 is the loop counter, and the already-reserved x30 preserves x4.
+.macro make_ubench_loop name, preamble, code, end_of_iteration
+       .p2align 4
+       .text
+       .global ubench_\name\()
+       .global _ubench_\name\()
+ubench_\name\():
+_ubench_\name\():
+        push_stack
+        \preamble\()
+        mov saved_base0, x0
+        mov saved_base1, x1
+        mov saved_base2, x2
+        mov saved_base3, x3
+        mov saved_base4, x4
+        mov runtime_loop_cnt, #UBENCH_RUNTIME_REPEATS
+        .p2align 2
+1:
+        // Restore post-incremented pointers before every repetition.
+        mov x0, saved_base0
+        mov x1, saved_base1
+        mov x2, saved_base2
+        mov x3, saved_base3
+        mov x4, saved_base4
+        \code\()
+        \end_of_iteration\()
+        subs runtime_loop_cnt, runtime_loop_cnt, #1
+        cbnz runtime_loop_cnt, 1b
         pop_stack
         ret
 .endm

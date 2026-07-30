@@ -262,6 +262,7 @@ ubench_t ubenchs_prefix[] = {
      &ubench_prefix_257,
      &ubench_prefix_258,
      &ubench_prefix_259,
+     &ubench_prefix_260,
 };
 
 char* ubench_prefix_instructions[] = {

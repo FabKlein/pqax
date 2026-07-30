@@ -261,6 +261,7 @@ void ubench_prefix_256(void*,void*,void*,void*,void*);
 void ubench_prefix_257(void*,void*,void*,void*,void*);
 void ubench_prefix_258(void*,void*,void*,void*,void*);
 void ubench_prefix_259(void*,void*,void*,void*,void*);
+void ubench_prefix_260(void*,void*,void*,void*,void*);
 
 extern ubench_t ubenchs_prefix[];
 extern char* ubench_prefix_instructions[];

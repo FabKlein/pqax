@@ -1,6 +1,8 @@
 #include "ubenchmarks.i"
 #include "profiler_macros.i"
 
+// Generation mode: flattened
+
 .macro prefix_0_core
 padding
 .endm
@@ -34970,3 +34972,268 @@ make_ubench prefix_258, nop, prefix_258_core, nop
 padding
 .endm
 make_ubench prefix_259, nop, prefix_259_core, nop
+
+.macro prefix_260_core
+/* 00 */             trn2_d v24, v20, v4
+/* 01 */             ldr x19, [x1, #112]
+/* 02 */             vmul v25, v12, v2
+/* 03 */             ldr x21, [x3]
+/* 04 */             vmul v21, v24, v2
+/* 05 */             ldr x7, [x1, #120]
+/* 06 */             vqrdmulh v16, v12, v19
+/* 07 */             ldr x9, [x3, #-8]
+/* 08 */             vqrdmulh v30, v24, v19
+/* 09 */             vins v29, x19, 0
+/* 10 */             trn1_d v15, v3, v22
+/* 11 */             vins v14, x21, 0
+/* 12 */             trn1_d v1, v20, v4
+/* 13 */             vins v29, x7, 1
+/* 14 */             vmlsq v25, v16, v7, 0
+/* 15 */             vins v14, x9, 1
+/* 16 */             vmlsq v21, v30, v7, 0
+/* 17 */             ldr x24, [x4, #-16]
+/* 18 */             vmulq v0, v29, v14, 0
+/* 19 */             vins v13, x10, 1
+/* 20 */             vqrdmulhq v16, v29, v14, 1
+/* 21 */             ldr x9, [x1, #80]
+/* 22 */             vsub v22, v15, v25
+/* 23 */             ldr x27, [x1, #88]
+/* 24 */             vadd v18, v1, v21
+/* 25 */             vins v6, x24, 0
+/* 26 */             vsub v5, v1, v21
+/* 27 */             ldr x24, [x1, #96]
+/* 28 */             vmlsq v0, v16, v7, 0
+/* 29 */             vins v23, x9, 0
+/* 30 */             vqrdmulh v10, v18, v9
+/* 31 */             ldr x9, [x1, #104]
+/* 32 */             vmul v18, v18, v13
+/* 33 */             vins v23, x27, 1
+/* 34 */             vadd v12, v15, v25
+/* 35 */             vins v3, x24, 0
+/* 36 */             vadd v24, v23, v0
+/* 37 */             ldr x16, [x4, #64]
+/* 38 */             vsub v20, v23, v0
+/* 39 */             vins v3, x9, 1
+/* 40 */             vmlsq v18, v10, v7, 0
+/* 41 */             ldr x10, [x4, #40]
+/* 42 */             vqrdmulhq v23, v24, v14, 3
+/* 43 */             ldr x24, [x4, #56]
+/* 44 */             vmulq v27, v20, v14, 4
+/* 45 */             ldr x9, [x4, #-8]
+/* 46 */             vmulq v30, v3, v14, 0
+/* 47 */             ldr x26, [x4, #24]
+/* 48 */             vadd v10, v12, v18
+/* 49 */             ldr x14, [x4]
+/* 50 */             vmulq v8, v24, v14, 2
+/* 51 */             ldr x7, [x1, #64]
+/* 52 */             vqrdmulhq v19, v3, v14, 1
+/* 53 */             vins v6, x9, 1
+/* 54 */             vqrdmulhq v31, v20, v14, 5
+/* 55 */             ldr x9, [x4, #-88]
+/* 56 */             vqrdmulh v21, v5, v6
+/* 57 */             ldr x12, [x1, #72]
+/* 58 */             vmul v4, v5, v28
+/* 59 */             vins v2, x14, 0
+/* 60 */             vmlsq v30, v19, v7, 0
+/* 61 */             vins v26, x7, 0
+/* 62 */             vsub v11, v12, v18
+/* 63 */             vins v2, x9, 1
+/* 64 */             vmlsq v27, v31, v7, 0
+/* 65 */             vins v26, x12, 1
+/* 66 */             vmlsq v4, v21, v7, 0
+/* 67 */     nop
+/* 68 */             vsub v0, v26, v30
+/* 69 */     nop
+/* 70 */             vadd v5, v26, v30
+/* 71 */     nop
+/* 72 */             vqdmulhq v21, v10, v7, 1
+/* 73 */     nop
+/* 74 */             vsub v30, v0, v27
+/* 75 */     nop
+/* 76 */             vsub v13, v22, v4
+/* 77 */     nop
+/* 78 */             vadd v12, v22, v4
+/* 79 */     nop
+/* 80 */             srshr v21.8H, v21.8H, #11
+/* 81 */     nop
+/* 82 */             vqdmulhq v3, v11, v7, 1
+/* 83 */     nop
+/* 84 */             vqdmulhq v4, v12, v7, 1
+/* 85 */     nop
+/* 86 */             vmlsq v10, v21, v7, 0
+/* 87 */     nop
+/* 88 */             vqdmulhq v28, v13, v7, 1
+/* 89 */     nop
+/* 90 */             srshr v3.8H, v3.8H, #11
+/* 91 */     nop
+/* 92 */             srshr v4.8H, v4.8H, #11
+/* 93 */     nop
+/* 94 */             vmlsq v8, v23, v7, 0
+/* 95 */     nop
+/* 96 */             vmlsq v11, v3, v7, 0
+/* 97 */     nop
+/* 98 */             vmlsq v12, v4, v7, 0
+/* 99 */             ldr x11, [x4, #-24]
+/* 100 */             srshr v21.8H, v28.8H, #11
+/* 101 */             ldr x9, [x4, #-80]
+/* 102 */             vadd v31, v5, v8
+/* 103 */             ldr x14, [x4, #-48]
+/* 104 */             vsub v18, v5, v8
+/* 105 */             vins v28, x16, 0
+/* 106 */             vmlsq v13, v21, v7, 0
+/* 107 */     nop
+/* 108 */             vadd v8, v0, v27
+/* 109 */             vins v19, x9, 0
+/* 110 */             trn1_s v3, v31, v18
+/* 111 */             vins v9, x14, 0
+/* 112 */             trn2_s v20, v31, v18
+/* 113 */             vins v28, x11, 1
+/* 114 */             trn1_s v22, v8, v30
+/* 115 */             vins v9, x24, 1
+/* 116 */             trn2_s v4, v8, v30
+/* 117 */             ldr x24, [x4, #-64]
+/* 118 */             st4 {v10.4S,v11.4S,v12.4S,v13.4S}, [x1]
+/* 119 */     nop
+/* 120 */     nop
+/* 121 */     nop
+/* 122 */     nop
+/* 123 */     nop
+/* 124 */     nop
+/* 125 */     nop
+/* 126 */     nop
+/* 127 */             vins v19, x26, 1
+/* 128 */             trn2_d v12, v3, v22
+/* 129 */             vins v13, x24, 0
+/* 130 */             trn2_d v24, v20, v4
+/* 131 */             ldr x19, [x1, #112]
+/* 132 */             vmul v25, v12, v2
+/* 133 */             ldr x21, [x3]
+/* 134 */             vmul v21, v24, v2
+/* 135 */             ldr x7, [x1, #120]
+/* 136 */             vqrdmulh v16, v12, v19
+/* 137 */             ldr x9, [x3, #-8]
+/* 138 */             vqrdmulh v30, v24, v19
+/* 139 */             vins v29, x19, 0
+/* 140 */             trn1_d v15, v3, v22
+/* 141 */             vins v14, x21, 0
+/* 142 */             trn1_d v1, v20, v4
+/* 143 */             vins v29, x7, 1
+/* 144 */             vmlsq v25, v16, v7, 0
+/* 145 */             vins v14, x9, 1
+/* 146 */             vmlsq v21, v30, v7, 0
+/* 147 */             ldr x24, [x4, #-16]
+/* 148 */             vmulq v0, v29, v14, 0
+/* 149 */             vins v13, x10, 1
+/* 150 */             vqrdmulhq v16, v29, v14, 1
+/* 151 */             ldr x9, [x1, #80]
+/* 152 */             vsub v22, v15, v25
+/* 153 */             ldr x27, [x1, #88]
+/* 154 */             vadd v18, v1, v21
+/* 155 */             vins v6, x24, 0
+/* 156 */             vsub v5, v1, v21
+/* 157 */             ldr x24, [x1, #96]
+/* 158 */             vmlsq v0, v16, v7, 0
+/* 159 */             vins v23, x9, 0
+/* 160 */             vqrdmulh v10, v18, v9
+/* 161 */             ldr x9, [x1, #104]
+/* 162 */             vmul v18, v18, v13
+/* 163 */             vins v23, x27, 1
+/* 164 */             vadd v12, v15, v25
+/* 165 */             vins v3, x24, 0
+/* 166 */             vadd v24, v23, v0
+/* 167 */             ldr x16, [x4, #64]
+/* 168 */             vsub v20, v23, v0
+/* 169 */             vins v3, x9, 1
+/* 170 */             vmlsq v18, v10, v7, 0
+/* 171 */             ldr x10, [x4, #40]
+/* 172 */             vqrdmulhq v23, v24, v14, 3
+/* 173 */             ldr x24, [x4, #56]
+/* 174 */             vmulq v27, v20, v14, 4
+/* 175 */             ldr x9, [x4, #-8]
+/* 176 */             vmulq v30, v3, v14, 0
+/* 177 */             ldr x26, [x4, #24]
+/* 178 */             vadd v10, v12, v18
+/* 179 */             ldr x14, [x4]
+/* 180 */             vmulq v8, v24, v14, 2
+/* 181 */             ldr x7, [x1, #64]
+/* 182 */             vqrdmulhq v19, v3, v14, 1
+/* 183 */             vins v6, x9, 1
+/* 184 */             vqrdmulhq v31, v20, v14, 5
+/* 185 */             ldr x9, [x4, #-88]
+/* 186 */             vqrdmulh v21, v5, v6
+/* 187 */             ldr x12, [x1, #72]
+/* 188 */             vmul v4, v5, v28
+/* 189 */             vins v2, x14, 0
+/* 190 */             vmlsq v30, v19, v7, 0
+/* 191 */             vins v26, x7, 0
+/* 192 */             vsub v11, v12, v18
+/* 193 */             vins v2, x9, 1
+/* 194 */             vmlsq v27, v31, v7, 0
+/* 195 */             vins v26, x12, 1
+/* 196 */             vmlsq v4, v21, v7, 0
+/* 197 */     nop
+/* 198 */             vsub v0, v26, v30
+/* 199 */     nop
+/* 200 */             vadd v5, v26, v30
+/* 201 */     nop
+/* 202 */             vqdmulhq v21, v10, v7, 1
+/* 203 */     nop
+/* 204 */             vsub v30, v0, v27
+/* 205 */     nop
+/* 206 */             vsub v13, v22, v4
+/* 207 */     nop
+/* 208 */             vadd v12, v22, v4
+/* 209 */     nop
+/* 210 */             srshr v21.8H, v21.8H, #11
+/* 211 */     nop
+/* 212 */             vqdmulhq v3, v11, v7, 1
+/* 213 */     nop
+/* 214 */             vqdmulhq v4, v12, v7, 1
+/* 215 */     nop
+/* 216 */             vmlsq v10, v21, v7, 0
+/* 217 */     nop
+/* 218 */             vqdmulhq v28, v13, v7, 1
+/* 219 */     nop
+/* 220 */             srshr v3.8H, v3.8H, #11
+/* 221 */     nop
+/* 222 */             srshr v4.8H, v4.8H, #11
+/* 223 */     nop
+/* 224 */             vmlsq v8, v23, v7, 0
+/* 225 */     nop
+/* 226 */             vmlsq v11, v3, v7, 0
+/* 227 */     nop
+/* 228 */             vmlsq v12, v4, v7, 0
+/* 229 */             ldr x11, [x4, #-24]
+/* 230 */             srshr v21.8H, v28.8H, #11
+/* 231 */             ldr x9, [x4, #-80]
+/* 232 */             vadd v31, v5, v8
+/* 233 */             ldr x14, [x4, #-48]
+/* 234 */             vsub v18, v5, v8
+/* 235 */             vins v28, x16, 0
+/* 236 */             vmlsq v13, v21, v7, 0
+/* 237 */     nop
+/* 238 */             vadd v8, v0, v27
+/* 239 */             vins v19, x9, 0
+/* 240 */             trn1_s v3, v31, v18
+/* 241 */             vins v9, x14, 0
+/* 242 */             trn2_s v20, v31, v18
+/* 243 */             vins v28, x11, 1
+/* 244 */             trn1_s v22, v8, v30
+/* 245 */             vins v9, x24, 1
+/* 246 */             trn2_s v4, v8, v30
+/* 247 */             ldr x24, [x4, #-64]
+/* 248 */             st4 {v10.4S,v11.4S,v12.4S,v13.4S}, [x1]
+/* 249 */     nop
+/* 250 */     nop
+/* 251 */     nop
+/* 252 */     nop
+/* 253 */     nop
+/* 254 */     nop
+/* 255 */     nop
+/* 256 */     nop
+/* 257 */             vins v19, x26, 1
+/* 258 */             trn2_d v12, v3, v22
+/* 259 */             vins v13, x24, 0
+padding
+.endm
+make_ubench prefix_260, nop, prefix_260_core, nop
