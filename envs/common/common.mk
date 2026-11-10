@@ -21,7 +21,7 @@ CFLAGS+= -O3\
 
 LDFLAGS = -static
 
-CYCLES?=NO # PMU / PERF
+CYCLES?=NO # PMU / PERF / NANOSEC (NANO is a compatibility alias)
 
 ifeq ($(CYCLES),PMU)
 	CFLAGS += -DPMU_CYCLES
@@ -29,6 +29,10 @@ endif
 
 ifeq ($(CYCLES),PERF)
 	CFLAGS += -DPERF_CYCLES
+endif
+
+ifneq ($(filter NANOSEC NANO,$(CYCLES)),)
+	CFLAGS += -DNANO_CYCLES
 endif
 
 ifeq ($(CYCLES),NO)

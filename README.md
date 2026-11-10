@@ -47,9 +47,9 @@ As mentioned above, the tests from [`tests/`](tests/) can be run in any environm
 interface [`tests/inc/hal.h`](tests/inc/hal.h).
 
 The supported test environments are located in [`envs`](envs/). There are currently two test environments: `native` for
-builds on an Arm host, and `cross` for cross-compilation. For the `cross` test environment, you can specific the
-environment variable `CYCLES` as one of `NO, PMU, PERF` to indicate the source of cycle counts, and `PLATFORM` as one of
-`v8a` or `v84a` to control the compilation target.
+builds on an Arm host, and `cross` for cross-compilation. For the `cross` test environment, you can specify the
+environment variable `CYCLES` as one of `NO`, `PMU`, `PERF`, or `NANOSEC` to indicate the source of cycle counts, and
+`PLATFORM` as one of `v8a` or `v84a` to control the compilation target.
 
 ## License
 
@@ -69,3 +69,72 @@ pqax contains some third party sources, some of which are licensed differently:
 To build/run tests, use `make build-{cross,native}-{testname}`, where `test` is one of the tests in
 [tests](tests). For example, to cross-compile the Keccak tests for simulation in QEMU, use `CYCLES=NO make
 build-cross-keccak_neon`.
+
+### AArch64 instruction profiling
+
+The profiler in [`tests/profiling`](tests/profiling) measures progressively
+longer prefixes of the assembly sequence in
+[`tests/profiling/asm.txt`](tests/profiling/asm.txt). After changing
+`asm.txt`, regenerate the assembly and C tables explicitly:
+
+```sh
+python3 tests/profiling/profiler.py --loop
+```
+
+The `--loop` option emits one copy of each instruction prefix in an
+80-iteration runtime loop. This avoids the large instruction-cache footprint
+of the original flattened mode. Before every iteration, the five buffer bases
+`x0` through `x4` are restored so that post-incrementing loads and stores do
+not walk outside their allocated buffers or introduce unintended data-cache
+misses. Loop mode reserves the following registers:
+
+```text
+x24-x27  saved x0-x3
+x28      loop counter
+x30      saved x4
+```
+
+Generation fails if `asm.txt` directly references one of those registers.
+Running `profiler.py` without `--loop` retains the original flattened mode.
+The generator rewrites `prefix_ubenchs.s`, `prefix_ubenchs.h`, and
+`profiler.c`.
+
+For Linux systems where PMU access is unavailable, `CYCLES=NANOSEC` uses
+`clock_gettime(CLOCK_MONOTONIC_RAW)` and converts elapsed nanoseconds to
+nominal target cycles:
+
+```text
+cycles = nanoseconds * target_frequency_MHz / 1000
+```
+
+The target frequency is the optional first application argument and defaults
+to 32 MHz. For example, build a statically linked Armv8-A Linux executable and
+run it for a 32 MHz target as follows:
+
+```sh
+make clean-cross-v8a_profiling
+make CYCLES=NANOSEC build-cross-v8a_profiling
+envs/cross-v8a/profiling-test.elf 32
+```
+
+The resulting ELF is statically linked, but it is a Linux userspace program,
+not bare-metal firmware. `NANO` remains a compatibility alias for `NANOSEC`.
+Clean before switching between `NANOSEC`, `PMU`, and
+`PERF`, because changes to the `CYCLES` make variable are not tracked as object
+dependencies.
+
+The `CYCLES=PMU` backend requires the `/dev/pmuctl` driver provided by
+[`jerinjacobk/armv8_pmu_cycle_counter_el0`](https://github.com/jerinjacobk/armv8_pmu_cycle_counter_el0)
+to permit access to the PMU cycle counter from EL0. During startup, the profiler
+issues `PMU_IOC_PMCCNTR` to enable EL0 access before configuring or reading
+`PMCCNTR_EL0`; shutdown disables the counter and revokes that access. Failure to
+open the device or issue the ioctl terminates the profiler instead of attempting
+an EL0 PMU access that may fault.
+
+Each reported prefix includes minimum, maximum, average, and median values
+from ten measurement batches. An empty runtime loop is measured first as a
+calibration baseline. Its median is printed separately and subtracted from
+the displayed prefix statistics and timeline position, saturating at zero.
+These values are cumulative prefix costs, not individual instruction issue
+timestamps or isolated instruction latencies. Timeline stars wrap every 80
+cycles; consult the numeric statistics for larger values.

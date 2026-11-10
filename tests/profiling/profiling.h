@@ -14,7 +14,17 @@ extern const ubench_t ubenchs_snippet;
 
 #define UBENCH_PATTERN_REPEATS 80
 
+typedef struct
+{
+    unsigned int min;
+    unsigned int max;
+    unsigned int average;
+    unsigned int median;
+} profiling_statistics_t;
+
+profiling_statistics_t measure_statistics(ubench_t func);
 unsigned int measure(ubench_t func);
+void profiling_set_target_frequency_mhz(uint64_t frequency_mhz);
 void profile_full();
 
 #define MAKE_PROFILE(func)                                      \
